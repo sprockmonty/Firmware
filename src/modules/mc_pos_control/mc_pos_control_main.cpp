@@ -219,6 +219,7 @@ private:
 	struct map_projection_reference_s _ref_pos;
 	float _ref_alt;
 	hrt_abstime _ref_timestamp;
+	hrt_abstime _last_warn;
 
 	bool _reset_pos_sp;
 	bool _reset_alt_sp;
@@ -349,6 +350,8 @@ private:
 	 */
 	void limit_altitude();
 
+	void warn_rate_limited(const char *str);
+
 	/**
 	 * Shim for calling task_main from task_create.
 	 */
@@ -420,6 +423,7 @@ MulticopterPositionControl::MulticopterPositionControl() :
 	_run_pos_control(true),
 	_run_alt_control(true),
 	_pos_first_nonfinite(true),
+	_last_warn(0),
 	_yaw(0.0f),
 	_yaw_takeoff(0.0f),
 	_in_landing(false),
@@ -523,6 +527,17 @@ MulticopterPositionControl::~MulticopterPositionControl()
 	}
 
 	pos_control::g_control = nullptr;
+}
+
+void
+MulticopterPositionControl::warn_rate_limited(const char *string)
+{
+	hrt_abstime now = hrt_absolute_time();
+
+	if (now - _last_warn > 50000) {
+		PX4_WARN(string);
+		_last_warn = now;
+	}
 }
 
 int
@@ -1192,7 +1207,7 @@ MulticopterPositionControl::control_offboard(float dt)
 					_vel_sp(1) = sinf(_yaw) * _pos_sp_triplet.current.vx + cosf(_yaw) * _pos_sp_triplet.current.vy;
 
 				} else {
-					PX4_WARN("Unknown velocity offboard coordinate frame");
+					warn_rate_limited("Unknown velocity offboard coordinate frame");
 				}
 
 				_run_pos_control = false;
@@ -1647,7 +1662,7 @@ void MulticopterPositionControl::control_auto(float dt)
 		if (!(PX4_ISFINITE(_pos_sp(0)) && PX4_ISFINITE(_pos_sp(1)) &&
 		      PX4_ISFINITE(_pos_sp(2)))) {
 
-			PX4_WARN("Auto: Position setpoint not finite");
+			warn_rate_limited("Auto: Position setpoint not finite");
 			_pos_sp = _curr_pos_sp;
 		}
 
@@ -1808,7 +1823,7 @@ MulticopterPositionControl::calculate_velocity_setpoint(float dt)
 		} else {
 			_vel_sp(0) = 0.0f;
 			_vel_sp(1) = 0.0f;
-			PX4_WARN("Caught invalid pos_sp in x and y");
+			warn_rate_limited("Caught invalid pos_sp in x and y");
 
 		}
 	}
@@ -1821,7 +1836,7 @@ MulticopterPositionControl::calculate_velocity_setpoint(float dt)
 
 		} else {
 			_vel_sp(2) = 0.0f;
-			PX4_WARN("Caught invalid pos_sp in z");
+			warn_rate_limited("Caught invalid pos_sp in z");
 		}
 
 	}
