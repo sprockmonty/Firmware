@@ -113,6 +113,7 @@ public:
 private:
 	bool		_task_should_exit;		/**< if true, task should exit */
 	bool		_gear_state_initialized;	///< true if the gear state has been initialized
+
 	int		_control_task;			/**< task handle for task */
 	orb_advert_t	_mavlink_log_pub;		/**< mavlink log advert */
 
@@ -2610,7 +2611,6 @@ MulticopterPositionControl::task_main()
 			_mode_auto = false;
 			_reset_int_z = true;
 			_reset_int_xy = true;
-			_limit_vel_xy = false;
 
 			/* store last velocity in case a mode switch to position control occurs */
 			_vel_sp_prev = _vel;
