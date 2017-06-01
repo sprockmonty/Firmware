@@ -2136,7 +2136,9 @@ MulticopterPositionControl::calculate_velocity_setpoint(float dt)
 	}
 
 	/* apply slewrate (aka acceleration limit) for smooth flying */
-	vel_sp_slewrate(dt);
+	if (!_control_mode.flag_control_auto_enabled) {
+		vel_sp_slewrate(dt);
+	}
 
 	/* TODO: move this to the end
 	 * reset previous vel sp */
