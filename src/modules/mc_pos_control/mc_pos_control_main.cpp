@@ -149,7 +149,7 @@ private:
 	control::BlockParamFloat _hold_dz; /**< deadzone around the center for the sticks when flying in position mode */
 	control::BlockParamFloat _acceleration_hor_max; /**< maximum velocity setpoint slewrate for auto & fast manual brake */
 	control::BlockParamFloat _acceleration_hor_manual; /**< maximum velocity setpoint slewrate for manual acceleration */
-	control::BlockParamFloat _deceleration_hor_slow; /**< slow velocity setpoint slewrate for manual deceleration*/
+	control::BlockParamFloat _deceleration_hor_max; /**< slow velocity setpoint slewrate for manual deceleration*/
 	control::BlockParamFloat _acceleration_z_max_up; /** max acceleration up */
 	control::BlockParamFloat _acceleration_z_max_down; /** max acceleration down */
 	control::BlockParamFloat _cruise_speed_90; /**<speed when angle is 90 degrees between prev-current/current-next*/
@@ -418,7 +418,7 @@ MulticopterPositionControl::MulticopterPositionControl() :
 	_hold_dz(this, "HOLD_DZ"),
 	_acceleration_hor_max(this, "ACC_HOR_MAX", true),
 	_acceleration_hor_manual(this, "ACC_HOR_MAN", true),
-	_deceleration_hor_slow(this, "DEC_HOR_SLOW", true),
+	_deceleration_hor_max(this, "DEC_HOR_MAX", true),
 	_acceleration_z_max_up(this, "ACC_UP_MAX", true),
 	_acceleration_z_max_down(this, "ACC_DOWN_MAX", true),
 	_cruise_speed_90(this, "CRUISE_90", true),
@@ -1747,10 +1747,6 @@ void MulticopterPositionControl::control_auto(float dt)
 							target_threshold_xy = _nav_rad.get();
 						}
 
-						if ((target_threshold - _nav_rad.get()) < SIGMA_NORM) {
-							target_threshold = _nav_rad.get();
-						}
-
 						/* velocity close to current setpoint with default zero if no next setpoint is available */
 						float vel_close = 0.0f;
 						float acceptance_radius = 0.0f;
@@ -2101,10 +2097,6 @@ MulticopterPositionControl::calculate_velocity_setpoint(float dt)
 		}
 
 	}
-
-	/* make sure velocity setpoint is saturated in xy*/
-	float vel_norm_xy = sqrtf(_vel_sp(0) * _vel_sp(0) +
-				  _vel_sp(1) * _vel_sp(1));
 
 	slow_land_gradual_velocity_limit();
 
