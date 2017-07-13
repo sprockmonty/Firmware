@@ -1,8 +1,4 @@
 #!/bin/sh
-trap "nmcli dev connect ens33" 2
-export SVGA_VGPU10=0 
-nmcli dev disconnect ens33
+export SVGA_VGPU10=0
+export GAZEBO_MODEL_DATABASE_URI=""
 $1
-nmcli dev connect ens33
-
- 

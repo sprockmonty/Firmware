@@ -86,17 +86,15 @@ Commands that should be added somewhere:
 git clone https://github.com/Dronecode/sitl_gazebo.git
 
 
-
-
 Add to bashrc file:
 # Set the plugin path so Gazebo finds our model and sim
 export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:$HOME/src/sitl_gazebo/Build
 # Set the model path so Gazebo finds the airframes
 export GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:$HOME/src/sitl_gazebo/models
-# Disable online model lookup since this is quite experimental and unstable
-export GAZEBO_MODEL_DATABASE_URI=""
 # Set path to sitl_gazebo repository
 export SITL_GAZEBO_PATH=$HOME/src/sitl_gazebo
+
+
 
 From inside Build folder:
 $ cd Build
