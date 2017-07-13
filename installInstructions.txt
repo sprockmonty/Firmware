@@ -1,0 +1,105 @@
+
+Install Vmware Workstation 12 Pro
+Install Ubuntu LTS
+
+From the command line run:
+$ sudo apt-get install gazebo7
+$ sudo apt-get install libgazebo7-dev
+Download project from github:
+run
+
+$ mkdir -p ~/src
+$ cd ~/src
+$ git clone -b L3-application https://github.com/sprockmonty/Firmware.git 
+$ cd Firmware
+
+
+
+Test with script gazeboVmWork.sh:
+        1. from terminal (in the Firmware directory) run $ chmod +x gazeboVmWork.sh
+        2. run script using $ ./gazeboVmWork.sh "gazebo"
+
+
+$ sudo usermod -a -G dialout $USER
+
+(From px4.io install instructions)
+$ sudo add-apt-repository ppa:george-edison55/cmake-3.x -y
+$ sudo apt-get update
+$ sudo apt-get install python-argparse git-core wget zip \
+    python-empy qtcreator cmake build-essential genromfs -y
+# simulation tools
+$ sudo apt-get install ant 
+$ sudo apt-get install protobuf-compiler 
+$ sudo apt-get install libeigen3-dev 
+$ sudo apt-get install libopencv-dev 
+$ sudo apt-get install openjdk-8-jdk 
+$ sudo apt-get install openjdk-8-jre  
+$ sudo pip install pymavlink pyserial 
+# required python packages
+$ sudo apt-get install python-pip
+$ sudo -H pip install pandas jinja2
+
+
+$ sudo apt-get remove modemmanager
+$ sudo apt-get install python-serial openocd \
+    flex bison libncurses5-dev autoconf texinfo build-essential \
+    libftdi-dev libtool zlib1g-dev \
+    python-empy  -y
+$ sudo apt-get remove gcc-arm-none-eabi gdb-arm-none-eabi binutils-arm-none-eabi gcc-arm-embedded
+$ sudo add-apt-repository --remove ppa:team-gcc-arm-embedded/ppa
+
+run toolchainInstall.sh script:
+        1. Download script
+        2. from terminal (in the download directory) run $ chmod +x gazeboVmWork.sh
+        3. run script using ./toolchainInstall.sh
+
+$ sudo apt-get install libc6:i386 libgcc1:i386 libstdc++5:i386 libstdc++6:i386
+
+Test using:
+$ arm-none-eabi-gcc --version
+Should see copyright information
+ 
+Still inside Firmware directory, run:
+$ make px4fmu-v2_default
+
+
+Create application:
+create .c file somewhere in src folder inside Firmware project folder
+add .c file location (relative to Firmware/src location) to set(config _module_list) section in  Firmware/cmake/configs/nuttx_px4fmu-v2_default.cmake file
+cd to Firmware project folder
+build application by running $ make px4fmu-v2_default
+upload by connecting pixhawk and running make px4fmu-v2_default
+
+Connecting to pixhawk terminal:
+run $ ./Tools/mavlink_shell.py /dev/ttyACM0
+
+
+
+
+
+
+
+
+
+
+Commands that should be added somewhere:
+git clone https://github.com/Dronecode/sitl_gazebo.git
+
+
+
+
+Add to bashrc file:
+# Set the plugin path so Gazebo finds our model and sim
+export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:$HOME/src/sitl_gazebo/Build
+# Set the model path so Gazebo finds the airframes
+export GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:$HOME/src/sitl_gazebo/models
+# Disable online model lookup since this is quite experimental and unstable
+export GAZEBO_MODEL_DATABASE_URI=""
+# Set path to sitl_gazebo repository
+export SITL_GAZEBO_PATH=$HOME/src/sitl_gazebo
+
+From inside Build folder:
+$ cd Build
+$ cmake ..
+$ make
+
